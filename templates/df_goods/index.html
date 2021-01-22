@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="/static/js/slide.js"></script>
+
+{% endblock head %}
+
+{% block center_body %}
+
+<!--		修改：想要添加的左边悬浮部分-->
+		 <div class="col-md-3" role="complementary">
+          <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm">
+            <ul class="nav bs-docs-sidenav">
+                <li>
+					<a href="#model01"><b>苹果</b></a>
+					<a href="#model02"><b>联想</b></a>
+					<a href="#model03"><b>惠普</b></a>
+					<a href="#model04"><b>华为</b></a>
+					<a href="#model05"><b>华硕</b></a>
+					<a href="#model06"><b>戴尔</b></a>
+					<a class="back-to-top" href="#show_count">返回顶部</a>
+				</li>
+			</ul>
+		  </nav>
+		 </div>
+
+
+    <div class="container bs-docs-container">
+
+	<div class="navbar_con">
+		<div class="navbar">
+			<h1 class="fl">全部商品分类</h1>
+			<ul class="navlist fl">
+				<li><a href="{% url "df_goods:index" %}">首页</a></li>
+				<li class="interval">|</li>
+				<li><a href="#">手机</a></li>
+				<li class="interval">|</li>
+				<li><a href="{% url "df_coupon:index" %}">抽奖</a></li>
+			</ul>
+		</div>
+	</div>
+
+
+
+	<div class="center_con clearfix">
+		<ul class="subnav fl">
+			<li><a href="#model01" class="fruit">苹果</a></li>
+			<li><a href="#model02" class="seafood">联想</a></li>
+			<li><a href="#model03" class="meet">惠普</a></li>
+			<li><a href="#model04" class="egg">华为</a></li>
+			<li><a href="#model05" class="vegetables">华硕</a></li>
+			<li><a href="#model06" class="ice">戴尔</a></li>
+		</ul>
+<!--		修改了图片的链接-->
+		<div class="slide fl">
+			<ul class="slide_pics">
+				<li><a href="#model01" class="fruit"><img src="/static/images/slide.jpg" alt="幻灯片"></a></li>
+				<li><a href="#model02" class="fruit"><img src="/static/images/slide02.jpg" alt="幻灯片"></a></li>
+				<li><a href="#model05" class="fruit"><img src="/static/images/slide03.jpg" alt="幻灯片"></a></li>
+				<li><a href="#model06" class="fruit"><img src="/static/images/slide04.jpg" alt="幻灯片"></a></li>
+			</ul>
+			<div class="prev"></div>
+			<div class="next"></div>
+			<ul class="points"></ul>
+		</div>
+		<div class="adv fl">
+			<a href="#"><img src="/static/images/adv01.jpg"></a>
+			<a href="#"><img src="/static/images/adv02.jpg"></a>
+		</div>
+	</div>
+
+	<div class="list_model">
+		<div class="list_title clearfix">
+			<h3 class="fl" id="model01">苹果</h3>
+			<div class="subtitle fl">
+				<span>|</span>
+{#				<a href="#">MacBook Air</a>#}
+{#				<a href="#">MacBook Pro 13 英寸</a>#}
+{#				<a href="#">MacBook Pro 16 英寸</a>#}
+                {% for g in type01 %}
+                    <a href="/{{ g.id }}/">{{  g.gtitle|slice:'10' }}</a>
+{#                    这里建立一个点击量前四位的商品的链接#}
+{#                    模板过滤器slice, 取变量前 N 个字符，可用于中文 #}
+                {%  endfor %}
+			</div>
+			<a href="/list1_1_1/" class="goods_more fr" id="fruit_more">查看更多 ></a>
+		</div>
+
+		<div class="goods_con clearfix">
+			<div class="goods_banner fl"><img src="/static/images/banner01.jpg"></div>
+			<ul class="goods_list fl">
+{#				<li>#}
+{#					<h4><a href="#">MacBook Air</a></h4>#}
+{#					<a href="#"><img src="/static/df_goods/goods003.jpg"></a>#}
+{#					<div class="prize">¥ 30.00</div>#}
+{#				</li>#}
+                {% for goods in type0 %}
+{#                    按照商品的最新上穿建立显示#}
+                <li>
+                    <h4><a href="/{{ goods.id }}/">{{ goods.gtitle }}</a></h4>
+                    <a href="/{{ goods.id }}/"><img src="{{ MEDIA_URL }}{{ goods.gpic }}"></a>
+                    <div class="prize"> ￥ {{ goods.gprice }} </div>
+                </li>
+                {% endfor %}
+			</ul>
+		</div>
+	</div>
+
+	<div class="list_model">
+		<div class="list_title clearfix">
+			<h3 class="fl" id="model02">联想</h3>
+			<div class="subtitle fl">
+				<span>|</span>
+{#				<a href="#">拯救者 Y7000P 2019</a>#}
+{#				<a href="#">Y9000X</a>				#}
+                {% for g in type1 %}
+                    <a href="/{{ g.id }}/">{{ g.gtitle|slice:'10' }}</a>
+                {% endfor %}
+			</div>
+			<a href="/list2_1_1/" class="goods_more fr">查看更多 ></a>
+		</div>
+
+		<div class="goods_con clearfix">
+			<div class="goods_banner fl"><img src="/static/images/banner02.jpg"></div>
+			<ul class="goods_list fl">
+                {% for goods in type1 %}
+                <li>
+                    <h4><a href="/{{ goods.id }}/">{{ goods.gtitle }}</a></h4>
+                    <a href="/{{ goods.id }}/"><img src="{{ MEDIA_URL }}{{ goods.gpic }}"></a>
+{#                    静态文件添加目录static前一定加"/"#}
+                    <div class="prize"> ￥ {{ goods.gprice }} </div>
+                </li>
+                {% endfor %}
+			</ul>
+		</div>
+	</div>
+
+	<div class="list_model">
+		<div class="list_title clearfix">
+			<h3 class="fl" id="model03">惠普</h3>
+			<div class="subtitle fl">
+				<span>|</span>
+{#				<a href="#">惠普（HP）战66 AMD升级版</a>#}
+{#				<a href="#">惠普（HP）光影精灵5plus</a>				#}
+                {% for g in type2 %}
+                    <a href="/{{ g.id }}/">{{ g.gtitle|slice:'10' }}</a>
+                {% endfor %}
+			</div>
+			<a href="#" class="goods_more fr">查看更多 ></a>
+		</div>
+
+		<div class="goods_con clearfix">
+			<div class="goods_banner fl"><img src="/static/images/banner03.jpg"></div>
+			<ul class="goods_list fl">
+				 {% for goods in type2 %}
+                <li>
+                    <h4><a href="/{{ goods.id }}/">{{ goods.gtitle }}</a></h4>
+                    <a href="/{{ goods.id }}/"><img src="{{ MEDIA_URL }}{{ goods.gpic }}"></a>
+{#                    静态文件添加目录static前一定加"/"#}
+                    <div class="prize"> ￥ {{ goods.gprice }} </div>
+                </li>
+                {% endfor %}
+			</ul>
+		</div>
+
+	</div>
+
+	<div class="list_model">
+		<div class="list_title clearfix">
+			<h3 class="fl" id="model04">华为</h3>
+			<div class="subtitle fl">
+				<span>|</span>
+{#				<a href="#">拯救者 Y7000P 2019</a>#}
+{#				<a href="#">Y9000X</a>				#}
+                {% for g in type3 %}
+                    <a href="/{{ g.id }}/">{{ g.gtitle|slice:'10' }}</a>
+                {% endfor %}
+			</div>
+			<a href="#" class="goods_more fr">查看更多 ></a>
+		</div>
+
+		<div class="goods_con clearfix">
+			<div class="goods_banner fl"><img src="/static/images/banner04.jpg"></div>
+			<ul class="goods_list fl">
+				 {% for goods in type3 %}
+                <li>
+                    <h4><a href="/{{ goods.id }}/">{{ goods.gtitle }}</a></h4>
+                    <a href="/{{ goods.id }}/"><img src="{{ MEDIA_URL }}{{ goods.gpic }}"></a>
+{#                    静态文件添加目录static前一定加"/"#}
+                    <div class="prize"> ￥ {{ goods.gprice }} </div>
+                </li>
+                {% endfor %}
+			</ul>
+		</div>
+	</div>
+
+	<div class="list_model">
+		<div class="list_title clearfix">
+			<h3 class="fl" id="model05">华硕</h3>
+			<div class="subtitle fl">
+				<span>|</span>
+{#				<a href="#">拯救者 Y7000P 2019</a>#}
+{#				<a href="#">Y9000X</a>				#}
+                {% for g in type4 %}
+                    <a href="/{{ g.id }}/">{{ g.gtitle|slice:'10' }}</a>
+                {% endfor %}
+			</div>
+			<a href="#" class="goods_more fr">查看更多 ></a>
+		</div>
+
+		<div class="goods_con clearfix">
+			<div class="goods_banner fl"><img src="/static/images/banner05.jpg"></div>
+			<ul class="goods_list fl">
+				 {% for goods in type4 %}
+                <li>
+                    <h4><a href="/{{ goods.id }}/">{{ goods.gtitle }}</a></h4>
+                    <a href="/{{ goods.id }}/"><img src="{{ MEDIA_URL }}{{ goods.gpic }}"></a>
+{#                    静态文件添加目录static前一定加"/"#}
+                    <div class="prize"> ￥ {{ goods.gprice }} </div>
+                </li>
+                {% endfor %}
+			</ul>
+		</div>
+	</div>
+
+	<div class="list_model">
+		<div class="list_title clearfix">
+			<h3 class="fl" id="model06">戴尔</h3>
+			<div class="subtitle fl">
+				<span>|</span>
+{#				<a href="#">拯救者 Y7000P 2019</a>#}
+{#				<a href="#">Y9000X</a>				#}
+                {% for g in type5 %}
+                    <a href="/{{ g.id }}/">{{ g.gtitle|slice:'10' }}</a>
+                {% endfor %}
+			</div>
+			<a href="#" class="goods_more fr">查看更多 ></a>
+		</div>
+
+		<div class="goods_con clearfix">
+			<div class="goods_banner fl"><img src="/static/images/banner06.jpg"></div>
+			<ul class="goods_list fl">
+				 {% for goods in type5 %}
+                <li>
+                    <h4><a href="/{{ goods.id }}/">{{ goods.gtitle }}</a></h4>
+                    <a href="/{{ goods.id }}/"><img src="{{ MEDIA_URL }}{{ goods.gpic }}"></a>
+{#                    静态文件添加目录static前一定加"/"#}
+                    <div class="prize"> ￥ {{ goods.gprice }} </div>
+                </li>
+                {% endfor %}
+			</ul>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="/static/js/slide.js"></script>
+    <script type="text/javascript">
+        BCSlideshow('focuspic');
+        var oFruit = document.getElementById('fruit_more');
+        var oShownum = document.getElementById('show_count');
+
+        var hasorder = localStorage.getItem('order_finish');
+
+        if(hasorder)
+        {
+        oShownum.innerHTML = '2';
+        }
+
+        oFruit.onclick = function(){
+        window.location.href = 'list.html';
+        }
+    </script>
+
+{% endblock center_body %}
+	</div>
+
+
+<!--修改：想让左边动态高亮显示-->
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="/static/js/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="/static/js/jquery.min.js"><\/script>')</script>
+  <script src="/static/js/bootstrap.min.js"></script>
+  <script src="/static/js/docs.min.js"></script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="/static/js/ie10-viewport-bug-workaround.js"></script>
+<script type="text/javascript" src="/static/js/and.js"></script>
+<!-- <script type="text/javascript" src="../assets/js/and2.js"></script>
+<script type="text/javascript" src="../assets/js/and3.js"></script> -->

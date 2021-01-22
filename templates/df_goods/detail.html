@@ -1,0 +1,290 @@
+{% extends 'df_goods/base.html' %}
+
+{% block head %}
+
+    <script type="text/javascript">
+
+        //要在文档开始时进行隐藏输入框操作，nice！，注意一定要在文档加载完后才能使用hide，不然一开始就用hide的话，浏览器就没法找到comment的位置，从而导致想要的初始化失败！
+        $(document).ready(function () {
+            $("#comment").hide();
+            $("#submit").hide();
+            $("#reset").hide();
+        });
+
+        //修改：提交暗流
+        function sbm() {
+            var com = document.getElementById("comment");
+
+            window.alert("提交有效！");
+        }
+
+        //修改：重置
+        function rst() {
+            var com = document.getElementById("comment");
+            com.value = '';
+        }
+
+        // 修改：在商品介绍和评论间反复横跳
+        function change(name, add_name, remove_name) {
+            document.getElementById("detail_name").innerHTML = name;
+            // 为当前点击的添加选中状态
+            var li_a = document.getElementById(add_name);
+            li_a.setAttribute('class', 'active');
+            // 删除其他的选中状态
+            var li_r = document.getElementById(remove_name);
+            li_r.setAttribute('class', '0');
+            //转移到评论的时候，取消商品详细那一块的具体内容
+            var show_detail = document.getElementById('show_detail');
+            if (add_name == 'first') {//点击商品详情的内容
+                show_detail.innerHTML = "{{goods.gcontent|striptags}}";
+                $("#comment").hide();//点击商品详细会隐藏评论框
+                $("#submit").hide();
+                $("#reset").hide();
+            }
+            if (add_name == 'second') {//点击评论的内容
+                show_detail.innerHTML = '';
+                $("#comment").show();//再次点击评论会显示评论框
+                $("#submit").show();
+                $("#reset").show();
+            }
+        }
+
+        {#  通过绑定js事件实现随着商品数量的增长商品总价上涨#}
+
+        function plus() {
+            num = parseFloat($('.num_show').val());
+            kucun = parseFloat($('.goods_kucun').html());
+            if (num <= kucun) {
+                $('.num_show').val(num + 1);
+                $('.num_show').blur();
+            }
+        }
+
+        function minus() {
+            num = parseFloat($('.num_show').val());
+            if (num > 1) {
+                $('.num_show').val(num - 1);
+                $('.num_show').blur();
+            } else {
+                {#商品的数量不可以小于1#}
+            }
+        }
+
+        $(function () {
+            $('.num_show').blur(function () {
+
+                num = parseInt($('.num_show').val());
+
+                if (num <= 1)
+                    num = 1;
+
+                kucun = parseInt($('.goods_kucun').text());
+
+                if (num >= kucun)
+                    num = kucun;
+
+                price = parseFloat($('#gprice').text());
+                total = num * price;
+                $('.num_show').val(num);
+                $('#gtotal').text(total.toFixed(2) + '元');
+
+                {#             $('add_cart').attr('href', '/cart/add'+$('gid').val())#}
+            });
+        });
+    </script>
+
+{% endblock head %}
+
+{% block center_content %}
+    <div class="goods_detail_con clearfix">
+        <div class="goods_detail_pic fl"><img src="{{ MEDIA_URL }}{{ goods.gpic }}"></div>
+
+        <div class="goods_detail_list fr">
+            <h3>{{ goods.gtitle }}</h3>
+            <p>{{ goods.gjianjie }}</p>
+            <div class="prize_bar">
+                <span class="show_pirze">¥<em id="gprice">{{ goods.endprice }}</em></span>
+                <span class="show_unit">库  存：<span class="goods_kucun">{{ goods.gkucun }}</span></span>
+            </div>
+
+            <button href="javascript:;" class="i5" id="i5">i5+256GB</button>&nbsp;&nbsp;
+            <button href="javascript:;" class="i7" id="i7">i7+256GB</button>
+
+            <div class="goods_num clearfix">
+                <div class="num_name fl">数 量：</div>
+                <div class="num_add fl">
+                    <input type="text" class="num_show fl" value="1">
+                    <a href="javascript:plus();" class="add fr">+</a>
+                    <a href="javascript:minus();" class="minus fr">-</a>
+                </div>
+            </div>
+            <div class="total">总价：<em id="gtotal">{{ goods.endprice }}元</em></div>
+            <div class="operate_btn">
+                {% if request.session.user_name|default:'' != '' %}
+                    <a href="javascript:;" class="buy_btn" id="buy_now">立即购买</a>
+                {% else %}
+                    <a href="{% url "df_user:login" %}" class="buy_btn">立即购买</a>
+                {% endif %}
+                {% if request.session.user_name|default:'' != '' %}
+                    <a href="javascript:;" class="add_cart" id="add_cart">加入购物车</a>
+                {% else %}
+                    <a href="{% url "df_user:login" %}" class="add_cart" id="add_cart">加入购物车</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="main_wrap clearfix">
+        <div class="l_wrap fl clearfix">
+            <div class="new_goods">
+                <h3>新品推荐</h3>
+                <ul>
+                    {% for goods in news %}
+                        <li>
+                            <a href="/{{ goods.id }}"><img src="{{ MEDIA_URL }}{{ goods.gpic }}"></a>
+                            <h4><a href="#">{{ goods.gtitle }}</a></h4>
+                            <div class="prize">￥{{ goods.gprice }}</div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="r_wrap fr clearfix">
+            <!--			<ul class="active">-->
+            <ul class="detail_tab clearfix">
+                <!--				修改：添加评论！-->
+                <li id='first' onclick="change('商品详情:','first','second');" class="active">商品介绍</li>
+                <li id='second' onclick="change('请您评论:','second','first');" class="0">评论</li>
+                <!--				<li class="active">商品介绍</li>-->
+                <!--				<li >评论</li>-->
+            </ul>
+
+            <div class="tab_content">
+                <dl>
+                    <dt><p id="detail_name">商品详情：</p></dt>
+                    <!--					这个‘|striptags’是django的一个过滤器-->
+                    <dd><p id="show_detail">{{ goods.gcontent|striptags }}</p></dd>
+                    <!--					<dd><p id="show_detail">{{goods.gcontent|safe}}</p></dd>-->
+                </dl>
+                <dl>
+                    <form action="{% url "df_comments:push" %}" id="comform" method="post">
+                        <input type="radio" name="OffPref" id="five" value="5"> 5分
+                        <input type="radio" name="OffPref" id="four" value="4"> 4分
+                        <input type="radio" name="OffPref" id="three" value="3"> 3分
+                        <input type="radio" name="OffPref" id="two" value="2"> 2分
+                        <input type="radio" name="OffPref" id="one" value="1"> 1分
+                        <br>
+                        <input type="hidden" name="good_id" id="good_id" value={{ goods.id }}>
+                        <textarea id="comment" name="comment" placeholder="该用户没有评价~" rows="4" cols="100" class="comment"
+                                  form="comform"></textarea>
+                        <br>
+                        <input type="submit" class="btn btn-success" id="submit" value="提交">
+                        <button type="button" class="btn btn-success" id="reset" onclick="rst();">重置</button>
+                    </form>
+
+                </dl>
+                <!--				单纯的为了加一根线-->
+                <ul class="detail_tab clearfix">
+                </ul>
+
+                <ul class="comment-list list-unstyled">
+                    <h1>评论列表</h1>
+                    {% for comment in comments %}
+                        <li class="comment-item">
+                            <span style="color:blue font-size:15px" class="nickname">{{ comment.user.uname }} 评分：{{ comment.point }}</span>
+                            <time class="submit-date">{{ comment.create_time }}</time>
+                            <div class="text">
+                                {{ comment.comment_text }}
+                            </div>
+                        </li>
+                        <br>
+                    {% empty %}
+                        暂无评论
+                    {% endfor %}
+                </ul>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="add_jump"></div>
+
+    <script type="text/javascript" src="/static/js/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript">
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}'}
+        })
+        $(document).ready(function () {
+
+            $(".buy_btn").click(function () {
+                num = parseInt($('.num_show').val());
+                $.get('/cart/add{{ goods.id }}_' + num + '/', function (data) {
+                    $('#show_count').text(data.count);
+                });
+                location.href = "/cart/";
+
+            });
+
+            $('#add_cart').click(function () {
+
+                var $add_x = $('#add_cart').offset().top;
+                var $add_y = $('#add_cart').offset().left;
+
+                var $to_x = $('#show_count').offset().top;
+                var $to_y = $('#show_count').offset().left;
+
+                $(".add_jump").css({'left': $add_y + 80, 'top': $add_x + 10, 'display': 'block'});
+
+                $('#add_cart').click(function () {
+
+                    {#            		    先判断是否登录#}
+                    if ($('.login_btn').text().indexOf('登录') >= 0) {
+                        alert('请登陆后购买');
+                        location.href('/user/login/');
+                        return;
+                    }
+
+                    {#                        购物车添加动画#}
+                    $(".add_jump").stop().animate({
+                            'left': $to_y + 7,
+                            'top': $to_x + 7
+                        },
+                        "fast", function () {
+                            $(".add_jump").fadeOut('fast', function () {
+                                count = $('.num_show').val();
+                                $('#show_count').html(count);
+                            });
+                        });
+
+                    num = parseInt($('.num_show').val());
+                    $.get('/cart/add{{ goods.id }}_' + num + '/', function (data) {
+                        $('#show_count').text(data.count);
+                    });
+                });
+            });
+
+            $('#i5').click(function () {
+                data = {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    gid: '{{goods.id}}'
+                };
+                $.post('changeprice1/', data, function (data) {
+                    window.location.reload();
+                });
+            })
+            $('#i7').click(function () {
+                data = {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    gid: '{{goods.id}}'
+                };
+                $.post('changeprice2/', data, function (data) {
+                    window.location.reload();
+                });
+            })
+
+        });
+    </script>
+
+{% endblock center_content %}

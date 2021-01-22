@@ -1,0 +1,253 @@
+{% extends 'base_foot.html' %}
+{#模板继承于base_foot#}
+
+{% block head %}
+    <script type="text/javascript" src="/static/js/register.js"></script>
+    <script type="text/javascript">
+    $(function(){
+
+	<!--定义如下变量-->
+	var error_name = false;
+	var error_password = false;
+	var error_check_password = false;
+	var error_email = false;
+	var error_question = false;
+	var error_answer = false;
+	var error_check = false;
+
+
+	$('#user_name').blur(function() {
+		check_user_name();
+	});
+
+	$('#pwd').blur(function() {
+		check_pwd();
+	});
+
+	$('#cpwd').blur(function() {
+		check_cpwd();
+	});
+
+	$('#email').blur(function() {
+		check_email();
+	});
+
+	$('#allow').click(function() {
+		if($(this).is(':checked'))
+		{
+			error_check = false;
+			$(this).siblings('span').hide();
+		}
+		else
+		{
+			error_check = true;
+			$(this).siblings('span').html('请勾选同意');
+			$(this).siblings('span').show();
+		}
+	});
+
+	$('#f_pwd').blur(function() {
+		check_question();
+	});
+
+	$('#q_answer').blur(function() {
+		check_answer();
+	});
+
+
+	function check_user_name(){
+		var len = $('#user_name').val().length;
+
+		<!--用户名长度在5-20个字符之间-->
+		if(len<5||len>20)
+		{
+			$('#user_name').next().html('输入5-20个字符的用户名');
+			$('#user_name').next().show();
+			error_name = true;
+
+		}
+		else
+		{
+			$.get('{% url "df_user:register_exist" %}?uname='+$('#user_name').val(),function(data){
+                if (data.count >= 1) {
+                    $('#user_name').next().html('用户名已经存在').show();
+                    error_name = true;
+                }else{
+                    $('#user_name').next().hide();
+                    error_name = false;
+                }
+            });
+        }
+	}
+
+	<!--密码长度为4-20个字符-->
+	function check_pwd(){
+		var len = $('#pwd').val().length;
+		if(len<4||len>20)
+		{
+			$('#pwd').next().html('密码最少4位，最长20位');
+			$('#pwd').next().show();
+			error_password = true;
+		}
+		else
+		{
+			$('#pwd').next().hide();
+			error_password = false;
+		}
+	}
+
+	<!--判断两次输入的密码是否一致-->
+	function check_cpwd(){
+		var pass = $('#pwd').val();
+		var cpass = $('#cpwd').val();
+
+		if(pass!=cpass)
+		{
+			$('#cpwd').next().html('两次输入的密码不一致');
+			$('#cpwd').next().show();
+			error_check_password = true;
+		}
+		else
+		{
+			$('#cpwd').next().hide();
+			error_check_password = false;
+		}
+
+	}
+
+	<!--电子邮箱-->
+	function check_email(){
+		var re = /^[a-z0-9][\w\.\-]*@[a-z0-9\-]+(\.[a-z]{2,5}){1,2}$/;
+
+		if(re.test($('#email').val()))
+		{
+			$('#email').next().hide();
+			error_email = false;
+		}
+		else
+		{
+			$('#email').next().html('你输入的邮箱格式不正确');
+			$('#email').next().show();
+			error_check_password = true;
+		}
+
+	}
+
+	function check_question() {
+		var get_question = $('#f_psw);
+		if (get_question == "0") {
+			$('#f_pwd').next().html('请选择密保问题，这将作为找回密码的重要依据');
+			$('#user_question').next.show();
+			error_question = true;
+		}
+		else {
+			$('#user_question').next.hide();
+			error_question = false;
+		}
+	}
+
+	function check_answer() {
+		var len = $('#q_answer).val().length;
+		if (len == 0 || len > 20) {
+			$('#q_answer').next().html('请输入20字以内的答案，这将作为您找回密码的重要凭证');
+			$('#q_answer').next().show();
+			error_answer = true;
+		}
+		else {
+			$('#user_name').next().hide();
+			error_answer = false;
+		}
+	}
+
+    <!--若上述条件全部满足，并且已勾选同意用户指南，则可以完成注册-->
+	$('#reg_form').submit(function() {
+		check_user_name();
+		check_pwd();
+		check_cpwd();
+		check_email();
+
+		if(error_name == false && error_password == false && error_check_password == false && error_email == false && error_check == false && error_question == false && error_answer == false)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+
+	});
+});
+    </script>
+{% endblock head %}
+
+{% block body %}
+	<div class="register_con">
+		<div class="l_con fl">
+			<a href="{% url "df_goods:index" %}" class="reg_logo"><img src="/static/images/logo02.png"></a>
+			<div class="reg_slogan">欢迎进入电脑商城</div>
+			<div class="reg_banner"></div>
+		</div>
+
+		<div class="r_con fr">
+			<div class="reg_title clearfix">
+				<h1>用户注册</h1>
+				<a href="{% url "df_user:login" %}">登录</a>
+			</div>
+			<div class="reg_form clearfix">
+				<form action="{% url "df_user:register_handle" %}" id='reg_form' method="post">
+                    {% csrf_token %}
+				<ul>
+					<li>
+						<label>用户名:</label>
+						<input type="text" name="user_name" id="user_name">
+						<span class="error_tip">提示信息</span>
+					</li>
+					<li>
+						<label>密码:</label>
+						<input type="password" name="pwd" id="pwd">
+						<span class="error_tip">提示信息</span>
+					</li>
+					<li>
+						<label>确认密码:</label>
+						<input type="password" name="confirm_pwd" id="cpwd">
+						<span class="error_tip">提示信息</span>
+					</li>
+					<li>
+						<label>邮箱:</label>
+						<input type="text" name="email" id="email">
+						<span class="error_tip">提示信息</span>
+					</li>
+					<li>
+						<label>密保问题：</label>
+						<select name="f_pwd" id="f_pwd" style="height:38px; width:290px" >
+							<option value = "0"> </option>
+							<option value = "你的中学班主任叫什么名字？">你的中学班主任叫什么名字？</option>
+							<option value = "你的QQ号是多少？">你的QQ号是多少？</option>
+							<option value = "你最喜欢的书籍是什么？">你最喜欢的书籍是什么？</option>
+							<option value = "你的男/女朋友叫什么名字？">你的男/女朋友叫什么名字？</option>
+							<option value = "你在大学期间最喜欢的课程是什么？">你在大学期间最喜欢的课程是什么？</option>
+							<span class="error_tip">提示信息</span>
+						</select>
+					</li>
+					<li>
+						<label>你的答案:</label>
+						<input type="text" name="q_answer" id="q_answer">
+						<span class="error_tip">提示信息</span>
+					</li>
+					<li class="agreement">
+						<input type="checkbox" name="allow" id="allow" checked="checked">
+						<label>同意《电脑商城用户使用协议》</label>
+						<span class="error_tip2">提示信息</span>
+					</li>
+					<li class="reg_sub">
+						<input type="submit" value="注 册">
+					</li>
+				</ul>				
+				</form>
+			</div>
+
+		</div>
+
+	</div>
+
+{% endblock body %}

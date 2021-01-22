@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+{% load staticfiles %}
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>{{ title }} |电脑商城</title>
+	<link rel="stylesheet" type="text/css" href="/static/css/reset.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+	<script type="text/javascript" src="/static/js/jquery-1.12.4.min.js"></script>
+{#	<script type="text/javascript" src="/static/js/register.js"></script>#}
+    {% block head %}{% endblock head %}
+</head>
+<body>
+
+{% block body %}{% endblock body %}
+
+<!--修改后-->
+	<div class="footer">
+		<div class="foot_link">
+			<a href="https://www.baidu.com">合作伙伴</a>
+			<span>|</span>
+			<a href="https://hkaren78.github.io/">联系我们</a>
+			<span>|</span>
+            <a href="#show_count">返回顶部</a>
+
+		</div>
+		<p>CopyRight © 2018 车宝宝队 All Rights Reserved</p>
+	</div>
+
+<!--修改前-->
+<!--    <div class="footer no-mp">-->
+<!--		<div class="foot_link">-->
+<!--			<a href="https://github.com/Hkaren78/ComputerMall">关于我们</a>-->
+<!--			<span>|</span>-->
+<!--			<a href="https://hkaren78.github.io/">联系我们</a>-->
+<!--			&lt;!&ndash;span>|</span>-->
+<!--			<a href="#">招聘人才</a>-->
+<!--			<span>|</span>-->
+<!--			<a href="#">友情链接</a&ndash;&gt;-->
+<!--		</div>-->
+<!--		<p>CopyRight © 2018 大佬说的都队 All Rights Reserved</p>-->
+<!--	</div>-->
+
+</body>
+</html>
